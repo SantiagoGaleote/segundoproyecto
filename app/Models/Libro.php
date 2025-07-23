@@ -15,9 +15,11 @@ class Libro extends Model
     protected $fillable = [
         'titulo',
         'autor',
-        'usuario_id',
+        'descripcion', // Descripción del libro
         'categoria_id',
         'pdf_url',
+        'img_url'
+
     ];
 
     // Relación: Un libro pertenece a un usuario

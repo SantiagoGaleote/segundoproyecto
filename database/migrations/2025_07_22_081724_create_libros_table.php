@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('titulo');
             $table->string('autor');
-            $table->foreignId('usuario_id')->constrained('usuarios')->onDelete('cascade');
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
+            $table->text('descripcion');// Descripción del libro
             $table->string('pdf_url')->nullable(); // Aquí se guarda el enlace al PDF
+            $table->string('img_url')->nullable(); // Aquí se guarda el enlace a la imagen del libro
             $table->timestamps();
         });
     }
