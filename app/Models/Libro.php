@@ -33,4 +33,13 @@ class Libro extends Model
     {
         return $this->belongsTo(Categoria::class);
     }
+    public function favoritos()
+    {
+        return $this->hasMany(Favorito::class);
+    }
+
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class);
+    }
 }

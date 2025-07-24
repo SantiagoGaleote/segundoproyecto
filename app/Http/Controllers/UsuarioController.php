@@ -2,67 +2,87 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Usuario;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\JsonResponse;
 
 class UsuarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    // Mostrar todos los usuarios
+    public function index(): JsonResponse
     {
-        return Usuario::all();
+        return response()->json(Usuario::all());
     }
 
-    
-    public function store(Request $request)
+    // Crear nuevo usuario
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'nombre' => 'required|string',
+            'nombre' => 'required|string|max:255',
             'email' => 'required|email|unique:usuarios,email',
-            'password' => 'required|min:6',
+            'password' => 'required|string|min:6',
+            'rol' => 'nullable|string|in:admin,usuario',
         ]);
 
-        return Usuario::create([
+        $usuario = Usuario::create([
             'nombre' => $request->nombre,
             'email' => $request->email,
+            'rol' => $request->rol ?? 'usuario',
             'password' => Hash::make($request->password),
         ]);
+
+        return response()->json($usuario, 201);
     }
 
-    public function show($id)
+    // Mostrar un usuario por ID
+    public function show($id): JsonResponse
     {
-        return Usuario::findOrFail($id);
+        $usuario = Usuario::find($id);
+
+        if (!$usuario) {
+            return response()->json(['mensaje' => 'Usuario no encontrado'], 404);
+        }
+
+        return response()->json($usuario);
     }
 
-    public function update(Request $request, $id)
+    // Actualizar un usuario
+    public function update(Request $request, $id): JsonResponse
     {
-        $usuario = Usuario::findOrFail($id);
+        $usuario = Usuario::find($id);
+
+        if (!$usuario) {
+            return response()->json(['mensaje' => 'Usuario no encontrado'], 404);
+        }
 
         $request->validate([
-            'nombre' => 'sometimes|required|string',
+            'nombre' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|email|unique:usuarios,email,' . $id,
-            'password' => 'sometimes|required|min:6',
+            'password' => 'sometimes|required|string|min:6',
+            'rol' => 'sometimes|in:admin,usuario',
         ]);
 
         $usuario->update([
             'nombre' => $request->nombre ?? $usuario->nombre,
             'email' => $request->email ?? $usuario->email,
+            'rol' => $request->rol ?? $usuario->rol,
             'password' => $request->password ? Hash::make($request->password) : $usuario->password,
         ]);
 
-        return $usuario;
+        return response()->json($usuario);
     }
 
-    public function destroy($id)
+    // Eliminar un usuario
+    public function destroy($id): JsonResponse
     {
         $usuario = Usuario::find($id);
+
         if (!$usuario) {
             return response()->json(['mensaje' => 'Usuario no encontrado'], 404);
         }
+
         $usuario->delete();
-        return response()->json(['mensaje' => 'Usuario eliminado']);
+        return response()->json(['mensaje' => 'Usuario eliminado correctamente']);
     }
 }
