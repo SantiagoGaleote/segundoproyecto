@@ -10,7 +10,7 @@ class CategoriaSeeder extends Seeder
 {
     public function run(): void
     {
-        $categorias = ['Novela', 'Ciencia Ficción', 'Fantasía', 'Historia', 'Autoayuda', 'Ciencia', 'Terror', 'Infantil', 'Educación', 'Clásicos'];
+        $categorias = ['Novela', 'Ciencia Ficcion', 'Fantasia', 'Historia', 'Autoayuda', 'Ciencia', 'Terror', 'Infantil', 'Educacion', 'Clasicos'];
 
         foreach ($categorias as $nombre) {
             Categoria::create(['nombre' => $nombre]);

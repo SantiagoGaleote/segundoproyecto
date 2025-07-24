@@ -11,14 +11,10 @@ class UsuarioSeeder extends Seeder
 {
     public function run(): void
     {
-        $usuarios = [
-            ['nombre' => 'Ana Gómez', 'email' => 'ana@example.com', 'password' => Hash::make('123456')],
-            ['nombre' => 'Luis Torres', 'email' => 'luis@example.com', 'password' => Hash::make('123456')],
-            ['nombre' => 'Carmen Ruiz', 'email' => 'carmen@example.com', 'password' => Hash::make('123456')],
-            ['nombre' => 'Pedro Márquez', 'email' => 'pedro@example.com', 'password' => Hash::make('123456')],
-            ['nombre' => 'Sofía Delgado', 'email' => 'sofia@example.com', 'password' => Hash::make('123456')],
+         $usuarios = [
+            ['nombre' => 'Roman Galeote', 'email' => 'romi@gmail.com', 'rol' => 'admin', 'password' => Hash::make('admin123')],
+            ['nombre' => 'Juan Pérez', 'email' => 'juan@gmail.com', 'rol' => 'usuario', 'password' => Hash::make('123456')],
         ];
-
         foreach ($usuarios as $data) {
             Usuario::create($data);
         }
