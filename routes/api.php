@@ -6,6 +6,7 @@ use App\Http\Controllers\LibroController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\FavoritoController;
+use App\Http\Controllers\AuthController;
 
 // 🔹 USUARIOS
 Route::get('/usuarios', [UsuarioController::class, 'index']);           
@@ -22,7 +23,7 @@ Route::put('/categorias/{id}', [CategoriaController::class, 'update']);
 Route::delete('/categorias/{id}', [CategoriaController::class, 'destroy']);
 
 // 🔹 LIBROS
-Route::get('/libros', [LibroController::class, 'index']);
+
 Route::get('/libros/{id}', [LibroController::class, 'show']);
 Route::post('/libros', [LibroController::class, 'store']);
 Route::put('/libros/{id}', [LibroController::class, 'update']);
@@ -47,3 +48,19 @@ Route::get('/usuarios/{id}/favoritos', [FavoritoController::class, 'porUsuario']
 
 // Obtener comentarios de un libro
 Route::get('/libros/{id}/comentarios', [ComentarioController::class, 'porLibro']);
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
+
+Route::middleware(['auth:sanctum', 'rol:admin'])->group(function () {
+    Route::post('/usuarios', [UsuarioController::class, 'store']);
+    Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum', 'rol:admin,usuario'])->group(function () {
+    Route::get('/libros', [LibroController::class, 'index']);
+});
