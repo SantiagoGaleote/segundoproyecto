@@ -1,66 +1,79 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UsuarioController;
-use App\Http\Controllers\LibroController;
-use App\Http\Controllers\CategoriaController;
-use App\Http\Controllers\ComentarioController;
-use App\Http\Controllers\FavoritoController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\{
+    AuthController,
+    UsuarioController,
+    LibroController,
+    CategoriaController,
+    ComentarioController,
+    FavoritoController
+};
 
-// 🔹 USUARIOS
-Route::get('/usuarios', [UsuarioController::class, 'index']);           
-Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);       
-Route::post('/usuarios', [UsuarioController::class, 'store']);          
-Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);     
-Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']); 
+/**
+ * Rutas públicas
+ */
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login',    [AuthController::class, 'login']);
 
-// 🔹 CATEGORÍAS
-Route::get('/categorias', [CategoriaController::class, 'index']);
-Route::get('/categorias/{id}', [CategoriaController::class, 'show']);
-Route::post('/categorias', [CategoriaController::class, 'store']);
-Route::put('/categorias/{id}', [CategoriaController::class, 'update']);
-Route::delete('/categorias/{id}', [CategoriaController::class, 'destroy']);
+/**
+ * Probar middleware de rol
+ */
+Route::middleware(['auth:sanctum', 'rol:admin'])->get('test-rol', function () {
+    return response()->json(['message' => 'OK - tienes rol admin']);
+});
 
-// 🔹 LIBROS
-
-Route::get('/libros/{id}', [LibroController::class, 'show']);
-Route::post('/libros', [LibroController::class, 'store']);
-Route::put('/libros/{id}', [LibroController::class, 'update']);
-Route::delete('/libros/{id}', [LibroController::class, 'destroy']);
-
-// 🔹 COMENTARIOS
-Route::get('/comentarios', [ComentarioController::class, 'index']);
-Route::get('/comentarios/{id}', [ComentarioController::class, 'show']);
-Route::post('/comentarios', [ComentarioController::class, 'store']);
-Route::put('/comentarios/{id}', [ComentarioController::class, 'update']);
-Route::delete('/comentarios/{id}', [ComentarioController::class, 'destroy']);
-
-// 🔹 FAVORITOS
-Route::get('/favoritos', [FavoritoController::class, 'index']);
-Route::get('/favoritos/{id}', [FavoritoController::class, 'show']);
-Route::post('/favoritos', [FavoritoController::class, 'store']);
-Route::put('/favoritos/{id}', [FavoritoController::class, 'update']); // opcional si permites editar favoritos
-Route::delete('/favoritos/{id}', [FavoritoController::class, 'destroy']);
-
-// Obtener favoritos de un usuario
-Route::get('/usuarios/{id}/favoritos', [FavoritoController::class, 'porUsuario']);
-
-// Obtener comentarios de un libro
-Route::get('/libros/{id}/comentarios', [ComentarioController::class, 'porLibro']);
-
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-
+/**
+ * Rutas protegidas
+ */
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Auth
+    Route::post('logout', [AuthController::class, 'logout']);
+
+    // Usuarios (autenticado)
+    Route::get('usuarios/{id}',  [UsuarioController::class, 'show'])->whereNumber('id');
+    Route::put('usuarios/{id}',  [UsuarioController::class, 'update'])->whereNumber('id');
+
+    /**
+     * Admin + Usuario
+     */
+    Route::middleware('rol:admin,usuario')->group(function () {
+
+        // Libros
+        Route::get('libros',           [LibroController::class, 'index']);
+        Route::get('libros/{id}',      [LibroController::class, 'show'])->whereNumber('id');
+        Route::get('libros/{id}/comentarios', [ComentarioController::class, 'porLibro'])->whereNumber('id');
+
+        // Comentarios y favoritos
+        Route::apiResource('comentarios', ComentarioController::class);
+        Route::apiResource('favoritos',   FavoritoController::class);
+        Route::get('usuarios/{id}/favoritos', [FavoritoController::class, 'porUsuario'])->whereNumber('id');
+    });
+
+    /**
+     * Solo administradores
+     */
+    Route::middleware('rol:admin')->group(function () {
+
+        // Usuarios
+        Route::get('usuarios',              [UsuarioController::class, 'index']);
+        Route::post('usuarios',             [UsuarioController::class, 'store']);
+        Route::delete('usuarios/{id}',      [UsuarioController::class, 'destroy'])->whereNumber('id');
+
+        // Libros
+        Route::post('libros',               [LibroController::class, 'store']);
+        Route::put('libros/{id}',           [LibroController::class, 'update'])->whereNumber('id');
+        Route::delete('libros/{id}',        [LibroController::class, 'destroy'])->whereNumber('id');
+
+        // Categorías
+        Route::apiResource('categorias', CategoriaController::class);
+    });
 });
 
-Route::middleware(['auth:sanctum', 'rol:admin'])->group(function () {
-    Route::post('/usuarios', [UsuarioController::class, 'store']);
-    Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy']);
-});
-
-Route::middleware(['auth:sanctum', 'rol:admin,usuario'])->group(function () {
-    Route::get('/libros', [LibroController::class, 'index']);
+/**
+ * Fallback para rutas no encontradas
+ */
+Route::fallback(function () {
+    return response()->json(['message' => 'Endpoint no encontrado.'], 404);
 });
