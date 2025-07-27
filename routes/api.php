@@ -15,13 +15,20 @@ use App\Http\Controllers\{
  */
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login',    [AuthController::class, 'login']);
+Route::get('/test-mail', function() {
+    \Log::info('Entró a ruta test-mail');
+    Mail::raw('Correo de prueba', function($msg) {
+        $msg->to('tu_correo@gmail.com')->subject('Prueba Laravel');
+    });
+    \Log::info('Después de Mail::raw');
+    return response()->json(['ok' => true]);
+});
+Route::post('usuarios', [UsuarioController::class, 'store']);
 
 /**
  * Probar middleware de rol
  */
-Route::middleware(['auth:sanctum', 'rol:admin'])->get('test-rol', function () {
-    return response()->json(['message' => 'OK - tienes rol admin']);
-});
+
 
 /**
  * Rutas protegidas
@@ -54,11 +61,12 @@ Route::middleware('auth:sanctum')->group(function () {
     /**
      * Solo administradores
      */
+    
+
     Route::middleware('rol:admin')->group(function () {
 
         // Usuarios
         Route::get('usuarios',              [UsuarioController::class, 'index']);
-        Route::post('usuarios',             [UsuarioController::class, 'store']);
         Route::delete('usuarios/{id}',      [UsuarioController::class, 'destroy'])->whereNumber('id');
 
         // Libros
