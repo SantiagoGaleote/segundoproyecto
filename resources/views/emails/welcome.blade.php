@@ -41,7 +41,9 @@
                 <a href="{{ $catalogUrl }}" class="button">🔍 Ver catálogo de libros</a>
             </p>
 
-            <p>Si tienes alguna duda o necesitas ayuda, no dudes en escribirnos a soporte@{{ str_replace(['http://', 'https://', 'www.'], '', config('app.url')) }}</p>
+            <p>Si tienes alguna duda o necesitas ayuda, no dudes en escribirnos a 
+                <a href="mailto:soporte@onlylibreria.com">soporte@onlylibreria.com</a>
+            </p>
 
             <p>¡Nos alegra tenerte con nosotros!</p>
         </div>
@@ -50,5 +52,5 @@
             <p>Un saludo cordial,<br>El equipo de {{ $appName }}</p>
         </div>
      </div>
-    </body>
+</body>
 </html>
