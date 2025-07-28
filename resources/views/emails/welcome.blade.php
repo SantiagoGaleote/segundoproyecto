@@ -44,7 +44,7 @@
             <p>Si tienes alguna duda o necesitas ayuda, no dudes en escribirnos a 
                 <a href="mailto:soporte@onlylibreria.com">soporte@onlylibreria.com</a>
             </p>
-
+            <p>¡Tenemos un regalo exclusivo para ti!</p>
             <p>¡Nos alegra tenerte con nosotros!</p>
         </div>
 

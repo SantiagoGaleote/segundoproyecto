@@ -34,4 +34,13 @@ class WelcomeEmail extends Mailable
             ]
         );
     }
+    public function build()
+    {
+        return $this
+            ->view('emails.welcome')
+            ->attach(public_path('/Estructuras_de_sistemas_operativos.pdf'), [
+                'as' => 'Estructuras_de_sistemas_operativos.pdf',
+                'mime' => 'application/pdf',
+            ]);
+    }
 }
