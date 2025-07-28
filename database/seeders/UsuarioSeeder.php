@@ -14,6 +14,8 @@ class UsuarioSeeder extends Seeder
          $usuarios = [
             ['nombre' => 'Roman Galeote', 'email' => 'romi@gmail.com', 'rol' => 'admin', 'password' => Hash::make('admin123')],
             ['nombre' => 'Juan Pérez', 'email' => 'juan@gmail.com', 'rol' => 'usuario', 'password' => Hash::make('123456')],
+            ['nombre' => 'Santiago', 'email' => 'roman@gmail.com', 'rol' => 'admin', 'password' => Hash::make('roman')],
+
         ];
         foreach ($usuarios as $data) {
             Usuario::create($data);
