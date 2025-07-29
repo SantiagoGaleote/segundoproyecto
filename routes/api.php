@@ -15,6 +15,7 @@ use App\Http\Controllers\{
  */
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login',    [AuthController::class, 'login']);
+
 Route::get('/test-mail', function() {
     \Log::info('Entró a ruta test-mail');
     Mail::raw('Correo de prueba', function($msg) {
@@ -66,8 +67,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('rol:admin')->group(function () {
 
         // Usuarios
-        Route::get('usuarios',              [UsuarioController::class, 'index']);
         Route::delete('usuarios/{id}',      [UsuarioController::class, 'destroy'])->whereNumber('id');
+        Route::get('usuarios',              [UsuarioController::class, 'index']);
+       
 
         // Libros
         Route::post('libros',               [LibroController::class, 'store']);
